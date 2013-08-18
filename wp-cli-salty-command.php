@@ -48,6 +48,8 @@ class WP_CLI_Salty_Command extends WP_CLI_Command {
 				WP_CLI::line( "Created database." );
 			else
 				WP_CLI::error( "Error creating database." );
+		} else {
+			WP_CLI::line( "Database already exists." );
 		}
 
 		$mysqli->close();
