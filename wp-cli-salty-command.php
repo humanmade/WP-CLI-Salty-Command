@@ -33,6 +33,10 @@ class WP_CLI_Salty_Command extends WP_CLI_Command {
 		$unsafe_project = strtolower( $unsafe_project );
 		$project = preg_replace( '/[^a-z0-9_\-]/', '', $unsafe_project );
 
+		// @todo check that the project exists
+
+		// @todo clone the SLS file and run Salt state.highstate --local
+
 		// Connect to MySQL
 		$mysqli = new mysqli( 'localhost', 'root', '' );
 		if ( $mysqli->connect_error )
@@ -47,6 +51,10 @@ class WP_CLI_Salty_Command extends WP_CLI_Command {
 		}
 
 		$mysqli->close();
+
+		// @todo symlink wp-config-local.php if one doesn't exist
+
+		// @todo install WordPress if it isn't installed
 
 		WP_CLI::success( "Project initialized." );
 	}
