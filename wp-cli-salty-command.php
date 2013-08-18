@@ -1,6 +1,8 @@
 <?php
 /**
  * Manage projects in Salty WordPress
+ * 
+ * @when before_wp_load
  */
 class WP_CLI_Salty_Command extends WP_CLI_Command {
 
@@ -18,10 +20,33 @@ class WP_CLI_Salty_Command extends WP_CLI_Command {
 	/**
 	 * Initialize a project.
 	 * 
+	 * @when before_wp_load
+	 * 
 	 * @subcommand init
 	 * @synopsis <project>
 	 */
 	public function init( $args, $assoc_args ) {
+
+		list( $unsafe_project ) = $args;
+
+		// Equivalent of WordPress' sanitize_key()
+		$unsafe_project = strtolower( $unsafe_project );
+		$project = preg_replace( '/[^a-z0-9_\-]/', '', $unsafe_project );
+
+		// Connect to MySQL
+		$mysqli = new mysqli( 'localhost', 'root', '' );
+		if ( $mysqli->connect_error )
+			WP_CLI::error( $mysqli->connect_error );
+
+		// Create the database if it doesn't exist
+		if ( ! $mysqli->select_db( $project ) ) {
+			if ( $mysqli->query( "CREATE DATABASE {$project}" ) )
+				WP_CLI::line( "Created database." );
+			else
+				WP_CLI::error( "Error creating database." );
+		}
+
+		$mysqli->close();
 
 		WP_CLI::success( "Project initialized." );
 	}
